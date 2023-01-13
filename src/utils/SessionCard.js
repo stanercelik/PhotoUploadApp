@@ -1,8 +1,9 @@
 import React, {useState} from 'react';
 
 import {Text, StyleSheet, View} from 'react-native';
+import MyColors from '../constants/MyColors';
 
-export default SessionCard = props => {
+export default function SessionCard({index, title}) {
   const date = () => {
     var day = new Date().getDate();
     var month = new Date().getMonth() + 1;
@@ -12,31 +13,33 @@ export default SessionCard = props => {
 
   return (
     <View style={styles.cardStyle}>
-      <Text style={styles.cardSessionStyle}>{props.title} ------ </Text>
-      <Text style={styles.cardDateStyle}>{date()}</Text>
+      <Text style={styles.cardSessionStyle}>
+        {title} {index + 1}
+      </Text>
+      <Text style={styles.cardDateStyle}> - {date()}</Text>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   cardStyle: {
     flexDirection: 'row',
     width: '95%',
-    backgroundColor: '#309496',
+    backgroundColor: MyColors.buttonColor,
     alignSelf: 'center',
     borderRadius: 8,
     padding: 10,
     marginVertical: 4,
   },
   cardSessionStyle: {
-    color: '#FFF',
+    color: MyColors.white,
     fontSize: 18,
     alignSelf: 'flex-start',
     marginLeft: 6,
     fontWeight: 'bold',
   },
   cardDateStyle: {
-    color: '#FFFFFF',
+    color: MyColors.white,
     fontSize: 18,
     fontWeight: 'bold',
   },

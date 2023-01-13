@@ -6,6 +6,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import MainPage from './Screens/MainScreen';
 import SecondScreen from './Screens/SecondScreen';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import MyColors from './constants/MyColors';
 
 const StackNav = createStackNavigator();
 
@@ -20,26 +21,28 @@ function App() {
             options={{
               title: 'My Sessions',
               headerTitleStyle: {
-                color: '#FFFFFF',
+                color: MyColors.white,
               },
               headerStyle: {
-                backgroundColor: '#CA8036D7',
+                backgroundColor: MyColors.headerColor,
               },
             }}></StackNav.Screen>
           <StackNav.Screen
             name="SecondScreen"
             component={SecondScreen}
-            options={
-              {
-                //title: 'My Sessions',
-              }
-            }></StackNav.Screen>
+            options={{
+              // title: 'Upload Documents',
+              headerTitleStyle: {
+                color: MyColors.white,
+              },
+              headerStyle: {
+                backgroundColor: MyColors.headerColor,
+              },
+            }}></StackNav.Screen>
         </StackNav.Navigator>
       </NavigationContainer>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default App;
