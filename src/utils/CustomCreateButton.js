@@ -1,6 +1,6 @@
 import React from 'react';
 import {Pressable, Text, StyleSheet, View} from 'react-native';
-import MyColors from '../constants/MyColors';
+import MyColors from '../constraints/MyColors';
 
 const CustomCreateButton = props => {
   return (
@@ -14,7 +14,7 @@ const CustomCreateButton = props => {
 
 const styles = StyleSheet.create({
   createSessionbuttonView: {
-    flex: 2,
+    flex: 3,
     backgroundColor: MyColors.backgroundColor,
     alignItems: 'center',
     justifyContent: 'center',

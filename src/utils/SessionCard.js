@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 
 import {Text, StyleSheet, View} from 'react-native';
-import MyColors from '../constants/MyColors';
+import MyColors from '../constraints/MyColors';
 
 export default function SessionCard({index, title}) {
   const date = () => {

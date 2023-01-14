@@ -6,7 +6,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import MainPage from './Screens/MainScreen';
 import SecondScreen from './Screens/SecondScreen';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import MyColors from './constants/MyColors';
+import MyColors from './constaints/MyColors';
 
 const StackNav = createStackNavigator();
 

@@ -7,7 +7,7 @@ import GlobalStyle from '../utils/GlobalStyle';
 import SessionCard from '../utils/SessionCard';
 import {Icon} from 'react-native-vector-icons/MaterialIcons';
 import CustomCreateButton from '../utils/CustomCreateButton';
-import MyStrings from '../constants/MyStrings';
+import MyStrings from '../constaints/MyStrings';
 
 export default MainPage = ({navigation}) => {
   const onPressNavigate = () => {
@@ -29,7 +29,7 @@ export default MainPage = ({navigation}) => {
     <View style={GlobalStyle.bodyMain}>
       <View style={styles.flatList}>
         {data.length == 0 ? (
-          <Text style={GlobalStyle.bigText}>{MyStrings.emptyMainPage}</Text>
+          <Text style={styles.bigText}>{MyStrings.emptyMainPage}</Text>
         ) : (
           <FlatList
             keyExtractor={(item, index) => index.toString()}
@@ -54,5 +54,13 @@ const styles = StyleSheet.create({
     padding: 8,
     flex: 9,
     alignContent: 'center',
+  },
+  bigText: {
+    flex: 1,
+    fontSize: 30,
+    fontWeight: 'bold',
+    alignSelf: 'center',
+    margin: 18,
+    //textAlignVertical: 'center',
   },
 });

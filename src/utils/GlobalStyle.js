@@ -1,6 +1,6 @@
 import {StyleSheet} from 'react-native';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
-import MyColors from '../constants/MyColors';
+import MyColors from '../constraints/MyColors';
 
 export default StyleSheet.create({
   bigText: {
@@ -8,7 +8,7 @@ export default StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
     alignSelf: 'center',
-    margin: 32,
+    margin: 18,
     //textAlignVertical: 'center',
   },
 

@@ -5,27 +5,50 @@ import {
   Text,
   PermissionsAndroid,
   Image,
-  TouchableOpacity,
+  FlatList,
+  Alert,
 } from 'react-native';
 import 'react-native-gesture-handler';
 import GlobalStyle from '../utils/GlobalStyle';
 import {launchCamera} from 'react-native-image-picker';
 import CustomCreateButton from '../utils/CustomCreateButton';
-import MyStrings from '../constants/MyStrings';
+import MyStrings from '../constraints/MyStrings';
+import ImageContainer from '../utils/ImageContainer';
+import MyColors from '../constraints/MyColors';
 
 export default function SecondScreen({navigation}) {
+  const [photoList, setPhotoList] = useState([]);
+
   const onPressNavigateMP = () => {
     navigation.navigate('MainPage');
   };
 
   return (
     <View style={GlobalStyle.bodyMain}>
-      <Text style={GlobalStyle.bigText}>Uploaded Document</Text>
-      <CustomCreateButton
-        text={MyStrings.secondPageButton}
-        onPressFunction={onPressNavigateMP}></CustomCreateButton>
-      <TouchableOpacity
-        onPress={async () => {
+      <Text style={GlobalStyle.bigText}>{MyStrings.emptySecondPage}</Text>
+      {
+        <View stye={{flex: 1, justifyContent: 'center'}}>
+          <FlatList
+            keyExtractor={(item, index) => index.toString()}
+            horizontal
+            style={{
+              backgroundColor: MyColors.backgroundColor,
+              marginHorizontal: 6,
+            }}
+            data={photoList}
+            renderItem={({item, index}) => (
+              <Image
+                style={{height: 200, width: 200}}
+                {...console.log(photoList[index])} // TEST BURDA NEYİ TUTUYO
+                source={{uri: photoList[index]}}
+              />
+            )}
+          />
+        </View>
+      }
+      <ImageContainer
+        text="Add Photo"
+        onPressFun={async () => {
           try {
             const granted = await PermissionsAndroid.request(
               PermissionsAndroid.PERMISSIONS.CAMERA,
@@ -37,28 +60,48 @@ export default function SecondScreen({navigation}) {
                 buttonPositive: 'OK',
               },
             );
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-              console.log('Camera permission given');
+            const perm = await PermissionsAndroid.request(
+              PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+              {
+                title: 'Gallery Permission',
+                message: 'App needs access to your gallery ',
+                buttonNeutral: 'Ask Me Later',
+                buttonNegative: 'Cancel',
+                buttonPositive: 'OK',
+              },
+            );
 
-              launchCamera({mediaType: 'photo', quality: 1}, res => {
-                console.log('res', res);
-              });
+            if (
+              granted === PermissionsAndroid.RESULTS.GRANTED &&
+              perm === PermissionsAndroid.RESULTS.GRANTED
+            ) {
+              console.log('Camera permission given');
+              console.log('Gallery permission given');
+
+              launchCamera(
+                {
+                  mediaType: 'photo',
+                  quality: 1,
+                  includeBase64: false,
+                  saveToPhotos: true,
+                },
+                res => {
+                  setPhotoList([...photoList, res.assets[0].uri]);
+                  console.log('res', res);
+                },
+              );
             } else {
-              console.log('Camera permission denied');
+              console.log('Camera permissions failed');
             }
           } catch (error) {
             console.warn(error);
           }
-        }}>
-        <Text> RESİM ÇEK</Text>
-      </TouchableOpacity>
+        }}></ImageContainer>
+      <CustomCreateButton
+        text={MyStrings.secondPageButton}
+        onPressFunction={onPressNavigateMP}></CustomCreateButton>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  imageStyle: {
-    height: 200,
-    width: 200,
-  },
-});
+const styles = StyleSheet.create({});
