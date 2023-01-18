@@ -14,7 +14,7 @@ const CustomCreateButton = props => {
 
 const styles = StyleSheet.create({
   createSessionbuttonView: {
-    flex: 3,
+    flex: 1,
     backgroundColor: MyColors.backgroundColor,
     alignItems: 'center',
     justifyContent: 'center',

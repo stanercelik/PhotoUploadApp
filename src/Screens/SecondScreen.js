@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   View,
@@ -15,17 +15,61 @@ import CustomCreateButton from '../utils/CustomCreateButton';
 import MyStrings from '../constraints/MyStrings';
 import ImageContainer from '../utils/ImageContainer';
 import MyColors from '../constraints/MyColors';
+import {useDispatch, useSelector} from 'react-redux';
+import {setSessions, setSessionID} from '../redux/action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SecondScreen({navigation}) {
-  const [photoList, setPhotoList] = useState([]);
+  const dispatch = useDispatch();
+  const {sessions, sessionID} = useSelector(state => state.sessionReducer);
+
+  const [uriList, setUriList] = useState([]);
+
+  useEffect(() => {
+    getTask();
+  }, []);
+
+  const getTask = () => {
+    //Find correct session with sessionID's
+    const SessionGet = sessions.find(ses => ses.ID === sessionID);
+    if (SessionGet) {
+      //Get the correct session
+      setUriList(SessionGet.photoList);
+    }
+  };
 
   const onPressNavigateMP = () => {
-    navigation.navigate('MainPage');
+    try {
+      var Session = {
+        ID: sessionID,
+        photoList: uriList,
+      };
+
+      //New session added to newSessions list.
+      let newSession = [...sessions, Session];
+      AsyncStorage.setItem('Sessions', JSON.stringify(newSession))
+        .then(() => {
+          // newSession added to Sessions list
+          dispatch(setSessions(newSession));
+          Alert.alert('Success!', 'Task saved succesfully.');
+          navigation.navigate('MainPage');
+        })
+        .catch(err => console.log(err));
+    } catch (error) {
+      //FOR DEBUG
+      /*console.log('sessionId: ', sessionID);
+      uriList.forEach(item => {
+        console.log('foto: ', item);
+      });*/
+      console.log(error);
+    }
   };
 
   return (
     <View style={GlobalStyle.bodyMain}>
-      <Text style={GlobalStyle.bigText}>{MyStrings.emptySecondPage}</Text>
+      <View style={{flex: 1}}>
+        <Text style={GlobalStyle.bigText}>{MyStrings.emptySecondPage}</Text>
+      </View>
       {
         <View stye={{flex: 1, justifyContent: 'center'}}>
           <FlatList
@@ -35,12 +79,11 @@ export default function SecondScreen({navigation}) {
               backgroundColor: MyColors.backgroundColor,
               marginHorizontal: 6,
             }}
-            data={photoList}
+            data={uriList}
             renderItem={({item, index}) => (
               <Image
-                style={{height: 200, width: 200}}
-                {...console.log(photoList[index])} // TEST BURDA NEYİ TUTUYO
-                source={{uri: photoList[index]}}
+                style={GlobalStyle.imageStyle}
+                source={{uri: uriList[index]}}
               />
             )}
           />
@@ -50,6 +93,7 @@ export default function SecondScreen({navigation}) {
         text="Add Photo"
         onPressFun={async () => {
           try {
+            //PERMISSIONS
             const granted = await PermissionsAndroid.request(
               PermissionsAndroid.PERMISSIONS.CAMERA,
               {
@@ -86,7 +130,8 @@ export default function SecondScreen({navigation}) {
                   saveToPhotos: true,
                 },
                 res => {
-                  setPhotoList([...photoList, res.assets[0].uri]);
+                  //Taken photo added to uriList
+                  setUriList([...uriList, res.assets[0].uri]);
                   console.log('res', res);
                 },
               );
@@ -97,6 +142,7 @@ export default function SecondScreen({navigation}) {
             console.warn(error);
           }
         }}></ImageContainer>
+
       <CustomCreateButton
         text={MyStrings.secondPageButton}
         onPressFunction={onPressNavigateMP}></CustomCreateButton>

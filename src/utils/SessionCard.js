@@ -14,7 +14,7 @@ export default function SessionCard({index, title}) {
   return (
     <View style={styles.cardStyle}>
       <Text style={styles.cardSessionStyle}>
-        {title} {index + 1}
+        {title} {index}
       </Text>
       <Text style={styles.cardDateStyle}> - {date()}</Text>
     </View>

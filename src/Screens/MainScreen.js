@@ -1,42 +1,65 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import 'react-native-gesture-handler';
 import {FlatList} from 'react-native-gesture-handler';
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
 import GlobalStyle from '../utils/GlobalStyle';
 import SessionCard from '../utils/SessionCard';
-import {Icon} from 'react-native-vector-icons/MaterialIcons';
 import CustomCreateButton from '../utils/CustomCreateButton';
-import MyStrings from '../constaints/MyStrings';
+import MyStrings from '../constraints/MyStrings';
+import {useDispatch, useSelector} from 'react-redux';
+import {setSessionID, setSessions} from '../redux/action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default MainPage = ({navigation}) => {
-  const onPressNavigate = () => {
-    navigation.navigate('SecondScreen');
+  const {sessionID, sessions} = useSelector(state => state.sessionReducer);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    //
+    getSessions();
+  }, []);
+
+  //Get sessions from AsyncStorage
+  const getSessions = () => {
+    AsyncStorage.getItem('Sessions')
+      .then(sessions => {
+        const parsedSessions = JSON.parse(sessions);
+        // Add to sessions
+        dispatch(setSessions(parsedSessions));
+      })
+      .catch(err => console.log(err));
+  };
+
+  const onPressNavigate = item => {
+    dispatch(setSessionID(item.sessionID)),
+      //DEBUG PRINT
+      console.log('ItemID:', item.sessionID),
+      navigation.navigate('SecondScreen');
   };
 
   const onPressNavigateAndAdd = () => {
+    dispatch(setSessionID(sessions.length + 1));
+    //DEBUG PRINT
+    console.log('Session Id: ', sessionID);
     navigation.navigate('SecondScreen');
-    setData([...data, newItem]);
   };
-
-  const [data, setData] = useState([]);
-
-  const [newItem, setNewItem] = useState(
-    <SessionCard title="Session "></SessionCard>,
-  );
 
   return (
     <View style={GlobalStyle.bodyMain}>
       <View style={styles.flatList}>
-        {data.length == 0 ? (
+        {sessions.length == 0 ? (
           <Text style={styles.bigText}>{MyStrings.emptyMainPage}</Text>
         ) : (
           <FlatList
             keyExtractor={(item, index) => index.toString()}
-            data={data}
+            data={sessions}
             renderItem={({item, index}) => (
-              <Pressable onPress={onPressNavigate}>
-                <SessionCard title="Session " index={index}></SessionCard>
+              <Pressable
+                onPress={() => {
+                  onPressNavigate(item);
+                }}>
+                <SessionCard title="Session " index={index + 1}></SessionCard>
               </Pressable>
             )}
           />
@@ -61,6 +84,5 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     alignSelf: 'center',
     margin: 18,
-    //textAlignVertical: 'center',
   },
 });

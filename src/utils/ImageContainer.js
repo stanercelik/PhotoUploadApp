@@ -16,18 +16,19 @@ export default function ImageContainer({onPressFun, text}) {
 
 const styles = StyleSheet.create({
   cardStyle: {
-    height: '30%',
+    flex: 2,
     backgroundColor: MyColors.addPhotoColor,
     borderRadius: 8,
     justifyContent: 'center',
-    margin: 22,
+    marginHorizontal: 14,
+    marginTop: 4,
+
     borderWidth: 1,
   },
   textStyle: {
     color: MyColors.white,
     fontSize: 32,
     alignSelf: 'center',
-
     fontWeight: 'bold',
   },
 });
