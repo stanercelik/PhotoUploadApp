@@ -1,16 +1,24 @@
-export const SET_SESSIONS = 'SET_SESSIONS';
-export const SET_SESSION_ID = 'SET_SESSION_ID';
+export const ADD_SESSION = 'SET_SESSION';
+export const DELETE_SESSION = 'DELETE_SESSION';
+export const UPDATE_SESSION = 'UPDATE_SESSION';
 
-export const setSessions = sessions => {
+export const AddSession = sessions => {
   return {
-    type: SET_SESSIONS,
+    type: ADD_SESSION,
     payload: sessions,
   };
 };
 
-export const setSessionID = sessionID => {
+export const DeleteSession = sessions => {
   return {
-    type: SET_SESSION_ID,
-    payload: sessionID,
+    type: DELETE_SESSION,
+    payload: sessions,
+  };
+};
+
+export const UpdateSession = sessions => {
+  return {
+    type: UPDATE_SESSION,
+    payload: sessions,
   };
 };

@@ -3,15 +3,15 @@ import MyColors from '../constraints/MyColors';
 
 export default StyleSheet.create({
   bigText: {
-    flex: 1,
     fontSize: 30,
     fontWeight: 'bold',
     alignSelf: 'center',
-    margin: 18,
+    color: MyColors.bigTextColor,
   },
 
   bodyMain: {
     flex: 1,
+    paddingHorizontal: 8,
     backgroundColor: MyColors.backgroundColor,
   },
 
@@ -19,6 +19,6 @@ export default StyleSheet.create({
     height: 250,
     width: 250,
     borderRadius: 8,
-    marginHorizontal: 6,
+    marginEnd: 8,
   },
 });

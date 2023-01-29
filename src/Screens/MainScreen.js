@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import React from 'react';
+import {StyleSheet, View, Text, Alert} from 'react-native';
 import 'react-native-gesture-handler';
 import {FlatList} from 'react-native-gesture-handler';
 import Pressable from 'react-native/Libraries/Components/Pressable/Pressable';
@@ -8,41 +8,26 @@ import SessionCard from '../utils/SessionCard';
 import CustomCreateButton from '../utils/CustomCreateButton';
 import MyStrings from '../constraints/MyStrings';
 import {useDispatch, useSelector} from 'react-redux';
-import {setSessionID, setSessions} from '../redux/action';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {DeleteSession} from '../redux/action';
 
 export default MainPage = ({navigation}) => {
-  const {sessionID, sessions} = useSelector(state => state.sessionReducer);
+  const {sessions} = useSelector(state => state.sessionReducer);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    //
-    getSessions();
-  }, []);
-
-  //Get sessions from AsyncStorage
-  const getSessions = () => {
-    AsyncStorage.getItem('Sessions')
-      .then(sessions => {
-        const parsedSessions = JSON.parse(sessions);
-        // Add to sessions
-        dispatch(setSessions(parsedSessions));
-      })
-      .catch(err => console.log(err));
+  const onPressNavigate = item => {
+    const {id = 0} = item;
+    navigation.navigate('PhotosScreen', {
+      itemID: id,
+    });
   };
 
-  const onPressNavigate = item => {
-    dispatch(setSessionID(item.sessionID)),
-      //DEBUG PRINT
-      console.log('ItemID:', item.sessionID),
-      navigation.navigate('SecondScreen');
+  const deleteFunctionOnPress = itemId => {
+    const deletedObject = sessions.find(obj => obj.id === itemId);
+    dispatch(DeleteSession(deletedObject));
   };
 
   const onPressNavigateAndAdd = () => {
-    dispatch(setSessionID(sessions.length + 1));
-    //DEBUG PRINT
-    console.log('Session Id: ', sessionID);
-    navigation.navigate('SecondScreen');
+    navigation.navigate('PhotosScreen', {itemID: null});
   };
 
   return (
@@ -59,15 +44,24 @@ export default MainPage = ({navigation}) => {
                 onPress={() => {
                   onPressNavigate(item);
                 }}>
-                <SessionCard title="Session " index={index + 1}></SessionCard>
+                <SessionCard
+                  title="Session "
+                  index={item.id}
+                  date={item.date}
+                  func={() => {
+                    deleteFunctionOnPress(item.id);
+                  }}></SessionCard>
               </Pressable>
             )}
           />
         )}
       </View>
-      <CustomCreateButton
-        text={MyStrings.mainPageButton}
-        onPressFunction={onPressNavigateAndAdd}></CustomCreateButton>
+      <View style={{flex: 2}}>
+        <CustomCreateButton
+          text={MyStrings.mainPageButton}
+          iconName="photo"
+          onPressFunction={onPressNavigateAndAdd}></CustomCreateButton>
+      </View>
     </View>
   );
 };
