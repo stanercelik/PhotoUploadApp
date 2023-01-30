@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {StyleSheet, View, Text} from 'react-native';
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
@@ -10,6 +10,23 @@ import MyColors from './constraints/MyColors';
 import {Provider} from 'react-redux';
 import reduxStore from './redux/store';
 import {PersistGate} from 'redux-persist/integration/react';
+import {
+  setJSExceptionHandler,
+  setNativeExceptionHandler,
+} from 'react-native-exception-handler';
+
+const handleError = (error, isFatal) => {
+  console.log('error: ', error, 'isFatal: ', isFatal);
+  alert('Ouuuppsss! There is an isse here :(error)');
+};
+
+const NativeHandleError = exceptionString => {
+  console.log('Exception: ', exceptionString);
+  alert('Ouuuppsss! There is an isse here :(exception)');
+};
+
+//setNativeExceptionHandler(NativeHandleError(), true, true);
+//setJSExceptionHandler(handleError(), true);
 
 const StackNav = createStackNavigator();
 

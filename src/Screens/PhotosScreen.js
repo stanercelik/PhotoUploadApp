@@ -6,10 +6,7 @@ import {
   PermissionsAndroid,
   Image,
   FlatList,
-  Alert,
-  Modal,
   TouchableOpacity,
-  TouchableHighlight,
 } from 'react-native';
 import 'react-native-gesture-handler';
 import GlobalStyle from '../utils/GlobalStyle';
