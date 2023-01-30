@@ -7,22 +7,28 @@ import {
   Image,
   FlatList,
   Alert,
+  Modal,
   TouchableOpacity,
+  TouchableHighlight,
 } from 'react-native';
 import 'react-native-gesture-handler';
 import GlobalStyle from '../utils/GlobalStyle';
 import {launchCamera} from 'react-native-image-picker';
 import CustomCreateButton from '../utils/CustomCreateButton';
+import FullScreenImageModal from '../utils/FullScreenImageModal';
 import MyStrings from '../constraints/MyStrings';
 import ImageContainer from '../utils/ImageContainer';
 import MyColors from '../constraints/MyColors';
 import {useDispatch, useSelector} from 'react-redux';
 import {AddSession, UpdateSession} from '../redux/action';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 export default function PhotosScreen({navigation, route}) {
   const dispatch = useDispatch();
   const {sessions} = useSelector(state => state.sessionReducer);
   const [uriList, setUriList] = useState([]);
+  const [visible, setIsVisible] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const selectedSession = sessions.find(obj => obj.id === route.params?.itemID);
 
@@ -89,30 +95,15 @@ export default function PhotosScreen({navigation, route}) {
           buttonPositive: 'OK',
         },
       );
-      const perm = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Gallery Permission',
-          message: 'App needs access to your gallery ',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
 
-      if (
-        granted === PermissionsAndroid.RESULTS.GRANTED &&
-        perm === PermissionsAndroid.RESULTS.GRANTED
-      ) {
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log('Camera permission given');
-        console.log('Gallery permission given');
 
         launchCamera(
           {
             mediaType: 'photo',
             quality: 1,
             includeBase64: false,
-            saveToPhotos: true,
           },
           res => {
             //Taken photo added to uriList
@@ -132,31 +123,42 @@ export default function PhotosScreen({navigation, route}) {
       <View style={{flex: 1, justifyContent: 'center'}}>
         <Text style={GlobalStyle.bigText}>{MyStrings.emptySecondPage}</Text>
       </View>
-      {
-        <View stye={{flex: 1, justifyContent: 'center'}}>
-          <FlatList
-            keyExtractor={(item, index) => index.toString()}
-            horizontal
-            style={styles.flatListStyle}
-            data={uriList}
-            renderItem={({index}) => (
-              <View>
-                <Image
-                  style={GlobalStyle.imageStyle}
-                  source={{uri: uriList[index]}}
-                />
-                <TouchableOpacity
-                  style={styles.deleteButtonStyle}
-                  onPress={() => {
-                    deleteImage(index);
-                  }}>
-                  <Text style={styles.deleteButtonTextStyle}>X</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          />
-        </View>
-      }
+
+      <View stye={{flex: 1, justifyContent: 'center'}}>
+        <FlatList
+          keyExtractor={(item, index) => item.toString()}
+          horizontal
+          style={styles.flatListStyle}
+          data={uriList}
+          renderItem={({item, index}) => (
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setIsVisible(true);
+                setSelectedImage(item);
+              }}>
+              <Image
+                style={GlobalStyle.imageStyle}
+                source={{uri: uriList[index]}}
+              />
+              <TouchableOpacity
+                style={styles.deleteButtonStyle}
+                onPress={() => {
+                  deleteImage(index);
+                }}>
+                <Text style={styles.deleteButtonTextStyle}>X</Text>
+              </TouchableOpacity>
+            </TouchableWithoutFeedback>
+          )}
+        />
+        <FullScreenImageModal
+          visible={visible}
+          selectedImage={selectedImage}
+          iconName="chevron-left"
+          onPressFunc={() => {
+            setIsVisible(false);
+          }}
+        />
+      </View>
 
       <View style={{flex: 2}}>
         <ImageContainer
@@ -189,6 +191,20 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 20,
+    backgroundColor: MyColors.red,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  backButtonStyle: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 50,
+    height: 50,
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: MyColors.black,
     backgroundColor: MyColors.red,
     justifyContent: 'center',
     alignItems: 'center',
